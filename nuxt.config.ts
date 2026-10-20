@@ -1,4 +1,5 @@
 import products from './data/products.json';
+const buildEnv = (globalThis as typeof globalThis & { process?: { env?: Record<string, string | undefined> } }).process?.env ?? {};
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: false },
@@ -14,8 +15,8 @@ export default defineNuxtConfig({
   // The client plugin uses these compile-time values to initialize Supabase.
   vite: {
     define: {
-      __SUPABASE_URL__: JSON.stringify(process.env.NUXT_PUBLIC_SUPABASE_URL || ''),
-      __SUPABASE_PUBLISHABLE_KEY__: JSON.stringify(process.env.NUXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || ''),
+      __SUPABASE_URL__: JSON.stringify(buildEnv.NUXT_PUBLIC_SUPABASE_URL || ''),
+      __SUPABASE_PUBLISHABLE_KEY__: JSON.stringify(buildEnv.NUXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || ''),
     },
   },
   css: ['~/assets/css/main.css', '~/assets/css/panel.css'],
