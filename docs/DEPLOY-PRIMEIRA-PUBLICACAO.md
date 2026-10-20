@@ -6,6 +6,8 @@ O projeto Netlify já foi criado para a loja:
 - ID: `117ff263-be72-4ef2-b85b-59943eb80fa1`
 - Painel: https://app.netlify.com/projects/tecla-nativa-storefront
 
+Para deploy conectado ao GitHub, o preset `netlify-static` do Nuxt grava os arquivos em `dist`; o `netlify.toml` aponta para essa pasta. O comando manual do script abaixo gera/publica `.output/public` localmente.
+
 O endereço `tecla-nativa-storefront.netlify.app` só ficará público depois do primeiro deploy. O conector Netlify desta sessão consegue criar o projeto e configurar variáveis, mas não oferece a operação de envio dos arquivos; por isso, o script abaixo faz o deploy com o CLI oficial da Netlify.
 
 ## No Windows PowerShell
