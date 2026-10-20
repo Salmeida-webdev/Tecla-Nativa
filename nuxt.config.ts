@@ -9,6 +9,14 @@ export default defineNuxtConfig({
       supabasePublishableKey: '',
     },
   },
+  // Static Netlify output has no runtime server to apply public runtime config.
+  // Inject these browser-safe Supabase values into the client bundle at build time.
+  vite: {
+    define: {
+      __SUPABASE_URL__: JSON.stringify(process.env.NUXT_PUBLIC_SUPABASE_URL || ''),
+      __SUPABASE_PUBLISHABLE_KEY__: JSON.stringify(process.env.NUXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || ''),
+    },
+  },
   css: ['~/assets/css/main.css', '~/assets/css/panel.css'],
   app: { head: { htmlAttrs: { lang: 'pt-BR' }, title: 'Tecla Nativa | Tecnologia com espaço na rotina', meta: [{ name: 'description', content: 'Acessórios e tecnologia escolhidos para trabalhar, estudar e viver melhor em casa.' }, { name: 'theme-color', content: '#080d17' }], link: [{ rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' }] } },
   nitro: {
