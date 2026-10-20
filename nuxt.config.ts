@@ -11,6 +11,7 @@ export default defineNuxtConfig({
   },
   // Static Netlify output has no runtime server to apply public runtime config.
   // Inject these browser-safe Supabase values into the client bundle at build time.
+  // The client plugin uses these compile-time values to initialize Supabase.
   vite: {
     define: {
       __SUPABASE_URL__: JSON.stringify(process.env.NUXT_PUBLIC_SUPABASE_URL || ''),
