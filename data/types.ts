@@ -1,0 +1,2 @@
+export interface ProductColor { id: string; label: string; swatch: string; image: string }
+export interface Product {id:string;slug:string;name:string;category:string;categoryLabel:string;summary:string;description:string;price:number;priceLabel:string;image:string;sku:string;badge?:string;colors:ProductColor[];variants:string[];specs:{label:string;value:string}[];compatibility:string;box:string;featured:boolean;}

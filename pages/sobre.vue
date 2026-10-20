@@ -1,0 +1,4 @@
+<script setup lang="ts">
+useSeoMeta({ title: 'Sobre a Tecla Nativa', description: 'Conheça a curadoria de acessórios e tecnologia para sua rotina.' });
+</script>
+<template><div class="wrap page-wrap"><div class="breadcrumb"><NuxtLink to="/">Início</NuxtLink><span>/</span><span>Sobre</span></div><div class="simple-page-heading"><span class="eyebrow">SOBRE A TECLA NATIVA</span><h1>Tecnologia com<br/>espaço na <em>rotina.</em></h1><p>A Tecla Nativa é uma curadoria de acessórios para home office, estudo, conectividade e casa inteligente. A proposta é ajudar cada pessoa a comparar opções com informação simples, atenção à compatibilidade e escolhas que façam sentido para o próprio espaço.</p><a class="button button-dark" href="https://wa.me/5583998739712" target="_blank" rel="noopener noreferrer">Fale com a gente ↗</a></div></div></template>
