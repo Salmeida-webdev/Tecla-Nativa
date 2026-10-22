@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" fill="none">
+  <rect width="640" height="640" rx="36" fill="#101b2a"/>
+  <path d="M104 436h432" stroke="#2a3b50" stroke-width="2"/>
+  <path d="M211 366c0-7 5-12 12-12h194c7 0 12 5 12 12v70H211v-70Z" fill="#16283a" stroke="#4ce2d2" stroke-width="3"/>
+  <path d="M246 391h148m-148 18h114m-114 18h86" stroke="#71849a" stroke-width="5" stroke-linecap="round"/>
+  <circle cx="320" cy="206" r="65" fill="#142438" stroke="#8a76ff" stroke-width="3"/>
+  <path d="M292 206h56m-28-28v56" stroke="#4ce2d2" stroke-width="8" stroke-linecap="round"/>
+  <text x="320" y="514" fill="#d9e6f3" font-family="Inter,Arial,sans-serif" font-size="18" letter-spacing="4" text-anchor="middle">IMAGEM A CADASTRAR</text>
+</svg>

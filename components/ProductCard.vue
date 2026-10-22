@@ -8,7 +8,7 @@ const defaultOption = props.product.variants[0];
 
 function addSelectedColor() {
   const option = defaultOption ? ` · ${defaultOption}` : '';
-  cart.add(props.product, `${selectedColor.value.label}${option}`, 1, selectedColor.value.image);
+  cart.add(props.product, `${selectedColor.value.label}${option}`, 1, selectedColor.value.image, selectedColor.value.id);
 }
 </script>
 

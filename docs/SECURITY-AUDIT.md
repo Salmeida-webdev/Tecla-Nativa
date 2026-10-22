@@ -1,6 +1,6 @@
-# Auditoria de dependências — v13
+# Auditoria de dependências — checkpoint Supabase
 
-Data da verificação: 20/10/2026; repetida para a revisão v13. `npm audit --audit-level=high --offline` encontrou zero vulnerabilidades.
+Data da verificação: 21/10/2026. `npm audit --audit-level=high` encontrou zero vulnerabilidades.
 
 ## Resultado
 
@@ -18,4 +18,4 @@ Esses são backports mantidos neste repositório, não releases oficiais dos man
 
 ## Verificação
 
-`npm run verify:security` cobre o limite de aninhamento do `braces` e uma assinatura RSA válida com o `node-forge` atualizado. Também devem passar `npm run verify:catalog`, `npm run generate` e `npm run verify:build`.
+`npm run verify:security` cobre o limite de aninhamento do `braces` e uma assinatura RSA válida com o `node-forge` atualizado. Neste checkpoint também passaram `npm run verify:catalog`, `npm run typecheck`, `npm run generate` e `npm run verify:build`.

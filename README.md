@@ -1,54 +1,107 @@
-# Tecla Nativa — vitrine e painel (Fase 1 · front administrativo v13)
+# Tecla Nativa
 
-Projeto da loja Tecla Nativa: vitrine e painel administrativo com base de dados inicial no Supabase. Login do proprietário e recuperação de senha usam Supabase Auth; os dados operacionais do painel ainda são demonstrativos.
+Loja demonstrativa de tecnologia para portfólio, com vitrine, checkout de demonstração e painel administrativo conectado ao Supabase.
 
-## Requisitos
+- **Vitrine:** <https://teclanativa.netlify.app/>
+- **Repositório:** <https://github.com/Salmeida-webdev/Tecla-Nativa>
+- **Painel:** `/painel`
+- **Catálogo:** 50 produtos, variantes de cor e imagens padronizadas.
+- **Crédito no rodapé:** Desenvolvido por LMX Soluções Digitais/Segundo Almeida.
 
-- Node.js 22.22.3 ou superior, 24.15 ou superior, ou 26+
-- npm
+## Como funciona a demonstração
 
-## Configurar Supabase localmente
+- Catálogo e estoque fictícios alimentam os fluxos do painel.
+- O checkout cria pedidos demonstrativos. O PagBank opera em Sandbox e não faz cobranças reais.
+- O Melhor Envio calcula cotações; a loja não compra fretes, não emite etiquetas e não despacha produtos.
+- A integração de pagamento e frete não deve ser usada como operação comercial sem novo briefing, credenciais e homologação.
 
-Copie `.env.example` para `.env` antes de iniciar o servidor. A URL e a chave pública já apontam para o projeto da loja. A chave publicável pode ser usada no navegador; a segurança depende das políticas RLS. Nunca use uma chave `service_role` no front-end.
+## Tecnologias
 
-O schema e os dados iniciais estão em `supabase/migrations/` e `supabase/seed.sql`. As migrações desta entrega já foram aplicadas no projeto remoto. Consulte `docs/SUPABASE-BACKEND.md` para o estado, o bootstrap do primeiro usuário administrador e o que falta configurar.
+- Nuxt 4, Vue 3, TypeScript e geração estática.
+- Supabase Auth, PostgreSQL, RLS, Storage e Edge Functions.
+- PagBank Sandbox e Melhor Envio para cotações de frete.
+- Netlify para servir `.output/public`.
 
-## Executar localmente
+## Requisitos e execução local
+
+- Node.js 24.15+ (validado com Node 24.20).
+- npm e Docker Desktop para os testes locais do Supabase.
+
+No PowerShell, na pasta do projeto:
 
 ```powershell
-cd $HOME\Downloads\Tecla-Nativa-Fase-1\tecla-nativa-storefront
-npm install
+if (-not (Test-Path .env)) { Copy-Item .env.example .env }
+npm ci
 npm run dev
 ```
 
-Acesse o endereço exibido pelo Nuxt (normalmente http://localhost:3000).
+Abra o endereço informado pelo Nuxt, normalmente `http://127.0.0.1:3000`.
+`.env.example` contém somente URL e chave **publicável** do Supabase. Nunca use uma chave `service_role` ou segredos de provedor em variáveis `NUXT_PUBLIC_*`.
 
-## Gerar publicação estática
+## Testes e build
 
 ```powershell
-npm run generate
+npm run check:all
+npm audit --audit-level=high
 ```
 
-A saída estática fica em `.output/public/`. O arquivo `netlify.toml` configura o comando de geração e o diretório de publicação. O deploy exige que a conta Netlify e o domínio sejam configurados pelo responsável.
+Para testar também o schema local, com Docker Desktop ativo:
 
-## Navegação incluída
+```powershell
+npx --yes supabase@latest start
+npm run test:db
+npm run lint:db
+```
 
-- Início; catálogo de 50 produtos; busca, categoria e ordenação; detalhe de produto; sacola local; configurador simples de espaço; guias; sobre; ajuda.
-- O botão de WhatsApp abre uma conversa com o número fornecido. A sacola monta uma mensagem para consulta, sem registrar pedido.
-- O painel administrativo tem login de proprietário ligado ao Supabase Auth; catálogo, pedidos e demais operações ainda não consomem dados reais.
+O build estático é gerado em `.output/public`. `npm run check:all` verifica tipos, testes Node, catálogo, patches de segurança, webhooks, geração Nuxt e arquivos publicados.
 
-## Painel administrativo — prévia do front-end
+Configure `NUXT_PUBLIC_WHATSAPP_NUMBER` no `.env` com o número de atendimento em formato internacional, apenas dígitos. O número não é armazenado no repositório; o build estático incorpora o valor definido para criar os links de atendimento.
 
-Acesse `/painel` no servidor local para revisar a interface. O painel reúne 17 módulos: visão geral, pedidos, financeiro e conciliação, trocas e atendimento, compras e fornecedores, produtos, variantes/SKUs, estoque, expedição, cupons, clientes, conteúdo, análises, integrações, equipe/permissões, histórico e configurações. O login valida a associação ativa de proprietário no Supabase. Os dados e ações operacionais continuam demonstrativos; catálogo, pedidos, APIs, webhooks e integrações reais ainda precisam ser conectados.
+## SEO técnico
 
-## Imagens
+`npm run generate` gera o sitemap com as rotas institucionais e os 50 produtos. Painel, conta, sacola e checkout ficam fora do sitemap. O mesmo script atualiza o `robots.txt`; a URL padrão é `https://teclanativa.netlify.app`. Ao ligar um domínio próprio, configure `NUXT_PUBLIC_SITE_URL` no ambiente de build e gere o site novamente.
 
-O catálogo contém 50 imagens principais e duas imagens de cor para cada produto (Marfim e Azul petróleo), todas exportadas como WebP quadrados. Os seletores mudam a foto do produto, sem alterar o fundo do card. A mesma variante acompanha a sacola. As imagens são conceituais: não representam fabricante, modelo, marca, conexão ou especificação verificados.
+## Publicar o build validado no Netlify
 
-Consulte `docs/IMAGENS-GERADAS.md` para os nomes e caminhos de todas as imagens.
+O ZIP final já inclui o conteúdo de `.output/public`. Extraia-o para Downloads e execute no PowerShell:
 
-Consulte `docs/SECURITY-AUDIT.md` para o resultado da auditoria de dependências; a árvore apresenta zero vulnerabilidades altas ou críticas com os backports locais revisados.
+```powershell
+$ErrorActionPreference = 'Stop'
+$Downloads = Join-Path $env:USERPROFILE 'Downloads'
+$Zip = Join-Path $Downloads 'Tecla-Nativa-Final.zip'
+$FinalPath = Join-Path $Downloads 'Tecla-Nativa-Final'
+$Suffix = 2
+while (Test-Path -LiteralPath $FinalPath) {
+    $FinalPath = Join-Path $Downloads "Tecla-Nativa-Final-$Suffix"
+    $Suffix++
+}
+Expand-Archive -LiteralPath $Zip -DestinationPath $FinalPath
+$ProjectPath = Join-Path $FinalPath 'tecla-nativa-storefront'
+$PublicPath = Join-Path $ProjectPath '.output\public'
+$SiteId = '3a3c1461-deed-436f-a6af-e92701b16c80'
+if (-not (Test-Path -LiteralPath (Join-Path $PublicPath 'index.html'))) { throw "Build estático não encontrado em $PublicPath" }
+Set-Location -LiteralPath $ProjectPath
+npx --yes netlify-cli@latest deploy --prod --no-build --dir $PublicPath --site $SiteId
+if ($LASTEXITCODE -ne 0) { throw 'O deploy falhou. Consulte a saída do Netlify CLI.' }
+```
 
-Consulte `docs/RESPONSIVIDADE-REVISAO.md` para os achados do vídeo, os ajustes para telas estreitas e os limites da validação visual.
+`--no-build` evita a tentativa do Netlify CLI de executar `npm run generate` dentro da pasta de entrega, que não inclui `node_modules`. Se o CLI pedir autenticação, execute `npx --yes netlify-cli@latest login` e depois repita o deploy. Considere publicado somente quando o comando confirmar sucesso e o deploy aparecer como `ready` no Netlify.
 
-Consulte `docs/BRIEFING-PAINEL-ADMINISTRATIVO.md` para o escopo completo e os critérios de aceite do front administrativo.
+## Estrutura principal
+
+- `pages/`, `components/`, `assets/`: vitrine, navegação e painel.
+- `data/products.json`: catálogo de referência e geração do sitemap.
+- `public/images/`: marca, imagens institucionais e imagens do catálogo.
+- `supabase/migrations/`, `supabase/functions/`, `supabase/tests/`: banco, integrações e testes.
+- `docs/`: operação demonstrativa, integrações, banco, segurança, desempenho e publicação.
+
+## Documentação
+
+- [Dados e modo de demonstração](docs/DEMO-PORTFOLIO.md)
+- [Fluxos das integrações](docs/INTEGRATION-STRUCTURE.md)
+- [Backend Supabase](docs/SUPABASE-BACKEND.md)
+- [Migrações](docs/MIGRACOES-SUPABASE.md)
+- [OAuth Melhor Envio](docs/MELHOR-ENVIO-OAUTH.md)
+- [Webhooks](docs/WEBHOOKS.md)
+- [Segurança](docs/SECURITY-AUDIT.md)
+- [Imagens do catálogo](docs/IMAGENS-GERADAS.md)

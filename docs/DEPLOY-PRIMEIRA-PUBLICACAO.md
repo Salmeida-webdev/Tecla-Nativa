@@ -1,29 +1,39 @@
-# Primeira publicação
+# Publicação da Tecla Nativa
 
-O projeto Netlify já foi criado para a loja:
+## Estado observado
 
-- Projeto: `tecla-nativa-storefront`
-- ID: `117ff263-be72-4ef2-b85b-59943eb80fa1`
-- Painel: https://app.netlify.com/projects/tecla-nativa-storefront
+- Vitrine pública: https://teclanativa.netlify.app/
+- O deploy publicado consultado em 22/10/2026 está pronto.
+- A tentativa seguinte terminou em erro porque o CLI iniciou uma compilação dentro de uma pasta sem dependências instaladas. Ela não substituiu a versão publicada.
+- O ZIP final precisa incluir .output/public. Para subir essa pasta já compilada, o comando exige --no-build.
 
-Para deploy conectado ao GitHub, o preset `netlify-static` do Nuxt grava os arquivos em `dist`; o `netlify.toml` aponta para essa pasta. O comando manual do script abaixo gera/publica `.output/public` localmente.
+## Procedimento único
 
-O endereço `tecla-nativa-storefront.netlify.app` só ficará público depois do primeiro deploy. O conector Netlify desta sessão consegue criar o projeto e configurar variáveis, mas não oferece a operação de envio dos arquivos; por isso, o script abaixo faz o deploy com o CLI oficial da Netlify.
+1. Baixe Tecla-Nativa-Final.zip e coloque-o em Downloads.
+2. Extraia-o para uma pasta nova; o projeto fica em tecla-nativa-storefront dentro dela.
+3. Abra PowerShell nessa pasta do projeto e confirme que .output/public/index.html existe.
+4. Execute:
 
-## No Windows PowerShell
+~~~powershell
+$ErrorActionPreference = 'Stop'
+$PublicPath = Join-Path (Get-Location) '.output\public'
+$SiteId = '3a3c1461-deed-436f-a6af-e92701b16c80'
+if (-not (Test-Path -LiteralPath (Join-Path $PublicPath 'index.html'))) {
+    throw "Build não encontrado em $PublicPath. Extraia o ZIP final completo."
+}
+npx --yes netlify-cli@latest deploy --prod --no-build --dir $PublicPath --site $SiteId
+if ($LASTEXITCODE -ne 0) { throw 'O deploy falhou; não considere a versão publicada.' }
+Write-Host 'O Netlify CLI confirmou o envio. Confira o estado ready no painel.' -ForegroundColor Green
+~~~
 
-Extraia o ZIP, abra o PowerShell na pasta do projeto e rode:
+Se o CLI pedir login, execute npx --yes netlify-cli@latest login e repita o comando acima. Só considere a versão publicada quando o Netlify mostrar estado ready.
 
-```powershell
-Set-ExecutionPolicy -Scope Process Bypass
-Set-Location "$env:USERPROFILE\Downloads\Tecla-Nativa-Fase-1\tecla-nativa-storefront"
-.\PUBLICAR-PRIMEIRA-VEZ.ps1
-```
+## Validação depois da publicação
 
-Se o nome da pasta extraída tiver um sufixo, ajuste somente o caminho de `Set-Location`. O script instala dependências, gera a versão estática, abre o login oficial da Netlify, registra as variáveis públicas do Supabase no contexto de produção e publica `.output/public`. Ele imprime a URL pública ao terminar.
+- Abra a vitrine em desktop e celular.
+- Teste uma cotação real de frete sem prosseguir para compra de etiqueta.
+- Faça uma compra demonstrativa com dados fictícios e confirme o pedido no painel.
+- Confirme o webhook do PagBank Sandbox sem realizar cobrança real.
+- Confira sitemap.xml, robots.txt, páginas de produto e rodapé.
 
-Requisitos: Node.js 20 LTS ou superior, conexão à internet e acesso à conta Netlify que contém o projeto. O endereço público aparece no resultado do deploy; domínio próprio pode ser associado depois pelo painel Netlify.
-
-## Verificação posterior
-
-Abra a URL exibida e confira a vitrine, `/painel/login` e o login do administrador. A loja continua em preparação: os produtos seed estão em rascunho e estoque zerado, e PagBank/Melhor Envio continuam desativados até a configuração das credenciais e callbacks com o domínio público.
+Não execute deploy em cada ajuste. Gere e valide o pacote completo e publique uma vez.

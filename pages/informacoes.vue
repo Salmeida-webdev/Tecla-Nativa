@@ -1,4 +1,20 @@
 <script setup lang="ts">
-useSeoMeta({ title: 'Informações da loja | Tecla Nativa', description: 'Informações de entrega, privacidade, termos e trocas da Tecla Nativa.' });
+useSeoMeta({ title: 'Informações da loja | Tecla Nativa', description: 'Informações sobre a demonstração, privacidade e integrações da Tecla Nativa.' });
 </script>
-<template><div class="wrap page-wrap"><div class="breadcrumb"><NuxtLink to="/">Início</NuxtLink><span>/</span><span>Informações da loja</span></div><div class="simple-page-heading"><span class="eyebrow">INFORMAÇÃO COM TRANSPARÊNCIA</span><h1>Antes de uma<br/><em>compra real.</em></h1><p>O projeto está na etapa de vitrine. Estas informações indicam os temas que precisam de políticas próprias antes da operação comercial. Nenhum prazo, regra de entrega ou condição legal é prometido nesta apresentação.</p></div><div class="guide-articles"><article id="entrega"><span>01 · ENTREGA</span><h2>Como será a entrega?</h2><p>As opções, prazos, valores e regiões atendidas serão calculados e publicados após a integração de frete e a definição do endereço de origem. Consulte o atendimento antes de uma compra.</p></article><article id="privacidade"><span>02 · PRIVACIDADE</span><h2>Como serão tratados seus dados?</h2><p>A política de privacidade será finalizada antes de qualquer cadastro ou coleta de dados em produção. Nesta versão, não há cadastro de clientes nem persistência de dados pessoais; os itens da sacola ficam salvos apenas no navegador.</p></article><article id="trocas"><span>03 · TROCAS E DEVOLUÇÕES</span><h2>Quais serão as condições?</h2><p>As condições de troca, devolução, garantia e atendimento serão definidas conforme a operação real e publicadas antes de receber pedidos.</p></article><article id="termos"><span>04 · TERMOS DE USO</span><h2>Quais são as regras da loja?</h2><p>Os termos finais serão preparados com os dados reais da operação e revistos antes da publicação comercial. Os textos desta página são apenas informativos para esta fase.</p></article></div></div></template>
+
+<template>
+  <div class="wrap page-wrap">
+    <div class="breadcrumb"><NuxtLink to="/">Início</NuxtLink><span>/</span><span>Informações do projeto</span></div>
+    <div class="simple-page-heading">
+      <span class="eyebrow">INFORMAÇÃO COM TRANSPARÊNCIA</span>
+      <h1>Uma experiência<br/><em>demonstrativa.</em></h1>
+      <p>A Tecla Nativa é uma loja de portfólio. É possível percorrer o checkout e ver pedidos de demonstração no painel, sem cobrança ou envio de produtos.</p>
+    </div>
+    <div class="guide-articles">
+      <article id="entrega"><span>01 · ENTREGA</span><h2>Há envio de produtos?</h2><p>Não. O Melhor Envio pode calcular cotações, mas esta loja não compra frete, não prepara pacotes e não emite etiquetas.</p></article>
+      <article id="privacidade"><span>02 · PRIVACIDADE</span><h2>O que acontece com meus dados?</h2><p>O checkout demonstrativo grava os dados informados junto ao pedido no Supabase. Use informações fictícias; não preencha dados pessoais, de cartão ou endereço real.</p></article>
+      <article id="trocas"><span>03 · TROCAS E DEVOLUÇÕES</span><h2>Há uma política comercial ativa?</h2><p>Não. Os pedidos são apenas demonstrativos e não criam obrigações de venda, entrega, troca ou garantia.</p></article>
+      <article id="termos"><span>04 · USO DO PORTFÓLIO</span><h2>Há cobrança no checkout?</h2><p>Não. O PagBank permanece no Sandbox. O retorno do provedor não confirma pagamento e nenhuma cobrança real é feita.</p></article>
+    </div>
+  </div>
+</template>

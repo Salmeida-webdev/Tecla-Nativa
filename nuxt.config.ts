@@ -8,11 +8,12 @@ export default defineNuxtConfig({
     public: {
       supabaseUrl: '',
       supabasePublishableKey: '',
+      siteUrl: buildEnv.NUXT_PUBLIC_SITE_URL || 'https://teclanativa.netlify.app',
+      whatsappNumber: buildEnv.NUXT_PUBLIC_WHATSAPP_NUMBER || '',
     },
   },
   // Static Netlify output has no runtime server to apply public runtime config.
   // Inject these browser-safe Supabase values into the client bundle at build time.
-  // The client plugin uses these compile-time values to initialize Supabase.
   vite: {
     define: {
       __SUPABASE_URL__: JSON.stringify(buildEnv.NUXT_PUBLIC_SUPABASE_URL || ''),

@@ -9,6 +9,7 @@ type AccessResult = {
 export function useAdminAuth() {
   const { $supabase } = useNuxtApp();
   const user = useState<User | null>('admin-auth-user', () => null);
+  const role = useState<string | null>('admin-auth-role', () => null);
 
   async function checkOwnerAccess(): Promise<AccessResult> {
     if (!$supabase) return { allowed: false, reason: 'not-configured' };
@@ -16,6 +17,7 @@ export function useAdminAuth() {
     const { data: userResult, error: userError } = await $supabase.auth.getUser();
     if (userError || !userResult.user) {
       user.value = null;
+      role.value = null;
       return { allowed: false, reason: 'signed-out' };
     }
 
@@ -28,16 +30,20 @@ export function useAdminAuth() {
 
     if (membershipError) {
       user.value = null;
+      role.value = null;
       return { allowed: false, reason: 'verification-failed' };
     }
 
-    const allowed = memberships?.some((membership) => membership.role === 'owner') ?? false;
+    const activeMembership = memberships?.find((membership) => membership.status === 'active') ?? null;
+    const allowed = Boolean(activeMembership);
     if (!allowed) {
       user.value = null;
+      role.value = null;
       return { allowed: false, reason: 'no-membership' };
     }
 
     user.value = userResult.user;
+    role.value = activeMembership?.role ?? null;
     return { allowed: true, user: userResult.user };
   }
 
@@ -45,7 +51,8 @@ export function useAdminAuth() {
     if (!$supabase) return;
     await $supabase.auth.signOut();
     user.value = null;
+    role.value = null;
   }
 
-  return { user, checkOwnerAccess, signOut, configured: Boolean($supabase) };
+  return { user, role, checkOwnerAccess, signOut, configured: Boolean($supabase) };
 }

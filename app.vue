@@ -13,5 +13,12 @@
 <script setup lang="ts">
 const route = useRoute();
 const isPanel = computed(() => route.path.startsWith('/painel'));
-const whatsappUrl = 'https://wa.me/5583998739712?text=' + encodeURIComponent('Olá! Vim pela loja Tecla Nativa e gostaria de tirar uma dúvida.');
+const whatsappUrl = useWhatsAppLink('Olá! Vim pela loja Tecla Nativa e gostaria de tirar uma dúvida.');
+const siteUrl = useRuntimeConfig().public.siteUrl as string;
+const canonicalUrl = computed(() => {
+  const path = route.path === '/' ? '/' : `${route.path.replace(/\/+$/, '')}/`;
+  return new URL(path, `${siteUrl.replace(/\/+$/, '')}/`).toString();
+});
+useHead({ link: [{ rel: 'canonical', href: canonicalUrl }] });
+useSeoMeta({ ogUrl: canonicalUrl });
 </script>

@@ -1,64 +1,39 @@
-# Estrutura de integrações — Tecla Nativa
+# Fluxos da loja
 
-Este documento prepara a arquitetura das integrações sem ativar cobrança, frete, webhooks ou envio de mensagens. Os conectores serão implementados e testados depois da primeira publicação e da configuração das credenciais de sandbox.
+A Tecla Nativa é uma demonstração de e-commerce. O checkout grava pedidos para que a operação apareça no painel. O PagBank permanece no Sandbox; o Melhor Envio usa a conta de produção apenas para cotar fretes. Nenhum pagamento real é cobrado e nenhuma etiqueta é comprada ou emitida.
 
-## Variáveis por ambiente
+## Compra demonstrativa
 
-### Build da vitrine na Netlify
+1. A vitrine apresenta o catálogo e os preços armazenados no banco.
+2. O Melhor Envio calcula as opções de frete na API de produção. A cotação fica vinculada ao carrinho e expira; o servidor valida o valor assinado antes de criar o pedido.
+3. O checkout revalida catálogo, variantes, estoque e preço no banco, registra o pedido demonstrativo e reserva as unidades em uma transação.
+4. O PagBank abre um checkout em Sandbox. O site não recebe dados de cartão e o retorno do navegador, sozinho, não confirma pagamento.
+5. O webhook assinado do PagBank reconcilia o estado do pagamento; eventos repetidos não duplicam baixa de estoque nem lançamentos financeiros.
+6. O painel acompanha o mesmo pedido, permite avançar a operação e registrar rastreio. Não há compra ou emissão de etiqueta.
 
-- `NUXT_PUBLIC_SUPABASE_URL`
-- `NUXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
+## OAuth e cotação do Melhor Envio
 
-Esses valores são públicos e usados pelo cliente para autenticação e leitura permitida por RLS. Nunca adicionar `service_role`, tokens de gateway ou segredos de webhook a variáveis `NUXT_PUBLIC_*` nem ao repositório.
+- A autorização começa por uma sessão administrativa e usa state aleatório de uso único.
+- Os tokens OAuth são armazenados no Supabase Vault e renovados no servidor próximo do vencimento.
+- A configuração de servidor MELHOR_ENVIO_BASE_URL deve ser https://melhorenvio.com.br. A função rejeita a URL Sandbox.
+- O pedido de cotação não cria um envio, não compra frete e não gera cobrança.
 
-### Ambiente seguro das funções
+## Operações do painel
 
-- `SUPABASE_URL`
-- `SUPABASE_SERVICE_ROLE_KEY`
-- Credencial de API PagBank
-- Segredo/chave de validação de webhook PagBank, se exigido pela configuração do gateway
-- Credenciais de API Melhor Envio
-- Credencial e configuração do serviço de e-mail, quando escolhido
+O painel usa os dados do mesmo banco da vitrine. Inclui pedidos, catálogo, variantes, estoque demonstrativo, clientes, cupons, conteúdo, fornecedores, compras, atendimento, equipe, integrações, auditoria e exportação CSV. Alterações ficam sujeitas às permissões administrativas e às políticas do banco.
 
-As credenciais serão guardadas como secrets das Edge Functions ou do ambiente de servidor. `integration_configs.secret_reference` armazena apenas uma referência operacional; não receberá valores secretos.
+## Verificações
 
-## PagBank — fluxo previsto
+Com Node.js 24 e Docker Desktop:
 
-1. A função `checkout-create-order` valida payload, disponibilidade, preço e quantidade no servidor.
-2. A função cria o pedido e seus itens com snapshots de nome, variante, SKU, preço e imagem. O cliente não escolhe o total final.
-3. A disponibilidade é reservada em operação atômica e com idempotência para impedir venda acima do estoque e pedidos duplicados.
-4. A função `pagbank-create-payment` cria a tentativa de pagamento no ambiente configurado e grava somente identificadores, status e URL de checkout em `payment_attempts`.
-5. `pagbank-webhook` valida a origem/assinatura conforme o contrato vigente do PagBank, registra o identificador único em `webhook_inbox` e processa cada evento idempotentemente.
-6. A atualização de pagamento, pedido, reserva, movimento de estoque e `order_status_events` deve ocorrer de forma consistente. Webhook duplicado não pode duplicar baixa ou transação.
+~~~powershell
+npm run check:all
+npm audit --audit-level=high
+npx --yes supabase@latest start
+npm run test:db
+npm run lint:db
+~~~
 
-Tabelas já preparadas: `orders`, `order_items`, `payment_attempts`, `financial_transactions`, `inventory_reservations`, `inventory_levels`, `stock_movements`, `order_status_events` e `webhook_inbox`.
+Os testes do banco cobrem pedidos, idempotência, inventário e webhooks. As funções externas não são chamadas pelos testes unitários; valide a cotação real pelo checkout demonstrativo antes da publicação.
 
-## Melhor Envio — fluxo previsto
-
-1. `shipping-quote` recebe CEP de origem/destino e dimensões e pesos das variantes; consulta o provedor no servidor.
-2. O valor e o serviço selecionados são salvos no pedido como snapshot antes do pagamento.
-3. Após confirmação do pagamento, `melhor-envio-create-shipment` solicita a etiqueta e grava o identificador em `shipments`.
-4. `melhor-envio-webhook` valida o evento, usa `webhook_inbox` para idempotência e grava mudanças de rastreamento em `shipments` e `shipment_events`.
-
-Tabelas já preparadas: endereço em snapshot JSON no pedido, atributos logísticos da variante, `shipments`, `shipment_events`, `orders` e `webhook_inbox`.
-
-## Configuração dependente da URL pública
-
-Após o primeiro deploy:
-
-1. Configurar a **Site URL** do Supabase com a URL HTTPS pública e adicionar a rota pública de recuperação de senha à lista de redirects permitidos. Preservar também `http://localhost:3000/painel/nova-senha` durante o desenvolvimento.
-2. Adicionar a URL pública nas configurações de retorno do checkout e nas origens permitidas aplicáveis.
-3. Criar e testar os endpoints de Edge Functions; registrar os URLs de webhook no painel de cada provedor apenas quando a validação estiver pronta.
-4. Configurar secrets de sandbox, validar idempotência, estados de erro e logs sem dados pessoais ou segredos.
-5. Fazer testes de ponta a ponta em sandbox e só então preparar credenciais de produção.
-
-## Portões antes de abrir checkout real
-
-- Substituir catálogo conceitual por produtos e preços reais aprovados.
-- Definir dimensões, peso e regras de frete reais por variante.
-- Fazer inventário inicial e confirmar estoque disponível.
-- Ativar a loja e publicar apenas produtos revisados.
-- Validar política de privacidade, termos, atendimento, cancelamento, troca e devolução.
-- Confirmar os webhooks e testar eventos duplicados, atrasados e fora de ordem.
-
-O seed atual mantém a loja em `setup`, categorias inativas, todos os produtos em rascunho e estoque zerado; o checkout real permanece bloqueado até esses portões serem atendidos.
+Para preparar uma nova versão da vitrine, use o procedimento em README.md. A publicação Netlify permanece uma etapa separada.

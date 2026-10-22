@@ -162,6 +162,7 @@ export type Database = {
           discount_amount: number
           id: string
           order_id: string
+          redemption_status: string
           redeemed_at: string
           store_id: string
         }
@@ -171,6 +172,7 @@ export type Database = {
           discount_amount: number
           id?: string
           order_id: string
+          redemption_status?: string
           redeemed_at?: string
           store_id: string
         }
@@ -180,6 +182,7 @@ export type Database = {
           discount_amount?: number
           id?: string
           order_id?: string
+          redemption_status?: string
           redeemed_at?: string
           store_id?: string
         }
@@ -623,6 +626,9 @@ export type Database = {
       orders: {
         Row: {
           billing_address: Json | null
+          checkout_idempotency_key: string | null
+          checkout_request_sha256: string | null
+          coupon_code_snapshot: string | null
           created_at: string
           currency: string
           customer_email: string | null
@@ -632,13 +638,20 @@ export type Database = {
           customer_phone: string | null
           discount_total: number
           fulfillment_status: string
+          fulfillment_carrier: string | null
           id: string
           internal_note: string | null
+          is_portfolio_demo: boolean
           order_number: string
           payment_status: string
           placed_at: string
           shipping_address: Json
+          shipping_method_snapshot: Json
           shipping_total: number
+          shipped_at: string | null
+          delivered_at: string | null
+          tracking_code: string | null
+          tracking_url: string | null
           status: string
           store_id: string
           subtotal: number
@@ -647,6 +660,9 @@ export type Database = {
         }
         Insert: {
           billing_address?: Json | null
+          checkout_idempotency_key?: string | null
+          checkout_request_sha256?: string | null
+          coupon_code_snapshot?: string | null
           created_at?: string
           currency?: string
           customer_email?: string | null
@@ -656,13 +672,20 @@ export type Database = {
           customer_phone?: string | null
           discount_total?: number
           fulfillment_status?: string
+          fulfillment_carrier?: string | null
           id?: string
           internal_note?: string | null
+          is_portfolio_demo?: boolean
           order_number: string
           payment_status?: string
           placed_at?: string
           shipping_address: Json
+          shipping_method_snapshot?: Json
           shipping_total?: number
+          shipped_at?: string | null
+          delivered_at?: string | null
+          tracking_code?: string | null
+          tracking_url?: string | null
           status?: string
           store_id: string
           subtotal: number
@@ -671,6 +694,9 @@ export type Database = {
         }
         Update: {
           billing_address?: Json | null
+          checkout_idempotency_key?: string | null
+          checkout_request_sha256?: string | null
+          coupon_code_snapshot?: string | null
           created_at?: string
           currency?: string
           customer_email?: string | null
@@ -680,13 +706,20 @@ export type Database = {
           customer_phone?: string | null
           discount_total?: number
           fulfillment_status?: string
+          fulfillment_carrier?: string | null
           id?: string
           internal_note?: string | null
+          is_portfolio_demo?: boolean
           order_number?: string
           payment_status?: string
           placed_at?: string
           shipping_address?: Json
+          shipping_method_snapshot?: Json
           shipping_total?: number
+          shipped_at?: string | null
+          delivered_at?: string | null
+          tracking_code?: string | null
+          tracking_url?: string | null
           status?: string
           store_id?: string
           subtotal?: number
@@ -714,8 +747,10 @@ export type Database = {
         Row: {
           amount: number
           checkout_url: string | null
+          checkout_lock_until: string | null
           created_at: string
           currency: string
+          environment: string
           expires_at: string | null
           id: string
           idempotency_key: string
@@ -723,6 +758,7 @@ export type Database = {
           order_id: string
           paid_at: string | null
           provider: string
+          provider_checkout_id: string | null
           provider_payment_id: string | null
           status: string
           store_id: string
@@ -731,8 +767,10 @@ export type Database = {
         Insert: {
           amount: number
           checkout_url?: string | null
+          checkout_lock_until?: string | null
           created_at?: string
           currency?: string
+          environment?: string
           expires_at?: string | null
           id?: string
           idempotency_key: string
@@ -740,6 +778,7 @@ export type Database = {
           order_id: string
           paid_at?: string | null
           provider: string
+          provider_checkout_id?: string | null
           provider_payment_id?: string | null
           status?: string
           store_id: string
@@ -748,8 +787,10 @@ export type Database = {
         Update: {
           amount?: number
           checkout_url?: string | null
+          checkout_lock_until?: string | null
           created_at?: string
           currency?: string
+          environment?: string
           expires_at?: string | null
           id?: string
           idempotency_key?: string
@@ -757,6 +798,7 @@ export type Database = {
           order_id?: string
           paid_at?: string | null
           provider?: string
+          provider_checkout_id?: string | null
           provider_payment_id?: string | null
           status?: string
           store_id?: string
@@ -1023,8 +1065,10 @@ export type Database = {
           currency: string
           expected_at: string | null
           id: string
+          idempotency_key: string | null
           notes: string | null
           purchase_number: string
+          request_sha256: string | null
           received_at: string | null
           sent_at: string | null
           status: string
@@ -1038,8 +1082,10 @@ export type Database = {
           currency?: string
           expected_at?: string | null
           id?: string
+          idempotency_key?: string | null
           notes?: string | null
           purchase_number: string
+          request_sha256?: string | null
           received_at?: string | null
           sent_at?: string | null
           status?: string
@@ -1053,8 +1099,10 @@ export type Database = {
           currency?: string
           expected_at?: string | null
           id?: string
+          idempotency_key?: string | null
           notes?: string | null
           purchase_number?: string
+          request_sha256?: string | null
           received_at?: string | null
           sent_at?: string | null
           status?: string
@@ -1357,6 +1405,7 @@ export type Database = {
       store_memberships: {
         Row: {
           created_at: string
+          email_snapshot: string | null
           id: string
           invited_at: string | null
           joined_at: string | null
@@ -1367,6 +1416,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          email_snapshot?: string | null
           id?: string
           invited_at?: string | null
           joined_at?: string | null
@@ -1377,6 +1427,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          email_snapshot?: string | null
           id?: string
           invited_at?: string | null
           joined_at?: string | null
@@ -1574,7 +1625,156 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      adjust_variant_stock: {
+        Args: {
+          p_delta: number
+          p_idempotency_key: string
+          p_reason: string
+          p_store_id: string
+          p_variant_id: string
+        }
+        Returns: {
+          available: number
+          movement_id: string
+          on_hand: number
+          reserved: number
+        }[]
+      }
+      create_storefront_order: {
+        Args: {
+          p_customer_email: string | null
+          p_customer_name: string
+          p_customer_phone: string | null
+          p_idempotency_key: string
+          p_items: Json
+          p_request_sha256: string
+          p_shipping_address: Json
+          p_shipping_method_snapshot: Json
+          p_shipping_total: number
+          p_store_id: string
+        }
+        Returns: {
+          is_idempotent_replay: boolean
+          result_order_id: string
+          result_order_number: string
+          result_total: number
+        }[]
+      }
+      create_portfolio_demo_order: {
+        Args: {
+          p_cart_sha256: string
+          p_coupon_code?: string | null
+          p_customer_email: string
+          p_customer_name: string
+          p_customer_note?: string | null
+          p_customer_phone: string | null
+          p_idempotency_key: string
+          p_items: Json
+          p_request_sha256: string
+          p_shipping_address: Json
+          p_shipping_quote_id: string
+          p_store_id: string
+        }
+        Returns: {
+          is_idempotent_replay: boolean
+          result_coupon_code: string | null
+          result_discount_total: number
+          result_order_id: string
+          result_order_number: string
+          result_shipping_total: number
+          result_subtotal: number
+          result_total: number
+        }[]
+      }
+      claim_portfolio_pagbank_checkout: {
+        Args: { p_order_id: string }
+        Returns: {
+          result_action: string
+          result_checkout_url: string | null
+          result_payment_attempt_id: string | null
+          result_provider_checkout_id: string | null
+        }[]
+      }
+      complete_portfolio_pagbank_checkout: {
+        Args: { p_expires_at?: string | null; p_payment_attempt_id: string; p_provider_checkout_id: string; p_checkout_url: string }
+        Returns: boolean
+      }
+      release_portfolio_pagbank_checkout: {
+        Args: { p_payment_attempt_id: string }
+        Returns: boolean
+      }
+      transition_storefront_order: {
+        Args: { p_action: string; p_carrier?: string | null; p_note?: string | null; p_order_id: string; p_tracking_code?: string | null; p_tracking_url?: string | null }
+        Returns: { result_fulfillment_status: string; result_status: string }[]
+      }
+      set_admin_product_status: {
+        Args: { p_product_id: string; p_status: string }
+        Returns: string
+      }
+      transition_admin_purchase_order: {
+        Args: { p_action: string; p_purchase_order_id: string }
+        Returns: string
+      }
+      update_storefront_tracking: {
+        Args: { p_carrier: string; p_note?: string | null; p_order_id: string; p_tracking_code?: string | null; p_tracking_url?: string | null }
+        Returns: boolean
+      }
+      create_admin_service_case: {
+        Args: { p_case_type: string; p_order_id: string | null; p_priority: string; p_reason: string; p_store_id: string }
+        Returns: { result_case_id: string; result_case_number: string }[]
+      }
+      transition_admin_service_case: {
+        Args: { p_case_id: string; p_note?: string | null; p_resolution?: string | null; p_status: string }
+        Returns: string
+      }
+      create_admin_purchase_order: {
+        Args: { p_expected_at: string | null; p_idempotency_key: string; p_items: Json; p_notes: string | null; p_request_sha256: string; p_store_id: string; p_supplier_id: string }
+        Returns: { is_idempotent_replay: boolean; result_purchase_number: string; result_purchase_order_id: string }[]
+      }
+      receive_admin_purchase_order: {
+        Args: { p_idempotency_key: string; p_items: Json; p_purchase_order_id: string }
+        Returns: { is_idempotent_replay: boolean; result_batch_id: string; result_status: string }[]
+      }
+      release_expired_storefront_reservations: {
+        Args: {
+          p_limit?: number
+        }
+        Returns: number
+      }
+      create_product_variant: {
+        Args: {
+          p_height_mm?: number | null
+          p_image_path?: string | null
+          p_length_mm?: number | null
+          p_option_key: string
+          p_option_label: string
+          p_price_override?: number | null
+          p_product_id: string
+          p_reorder_point?: number
+          p_sku: string
+          p_store_id: string
+          p_swatch_hex?: string | null
+          p_weight_grams?: number | null
+          p_width_mm?: number | null
+        }
+        Returns: string
+      }
+      update_product_variant: {
+        Args: {
+          p_height_mm: number | null
+          p_image_path: string | null
+          p_length_mm: number | null
+          p_option_label: string
+          p_price_override: number | null
+          p_reorder_point: number
+          p_store_id: string
+          p_swatch_hex: string | null
+          p_variant_id: string
+          p_weight_grams: number | null
+          p_width_mm: number | null
+        }
+        Returns: string
+      }
     }
     Enums: {
       [_ in never]: never

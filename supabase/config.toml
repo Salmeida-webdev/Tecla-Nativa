@@ -1,0 +1,58 @@
+project_id = "tecla-nativa-storefront"
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public", "graphql_public"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+
+[db]
+port = 54322
+shadow_port = 54320
+major_version = 17
+
+[db.migrations]
+enabled = true
+
+[db.seed]
+enabled = true
+sql_paths = ["./seed.sql"]
+
+[studio]
+enabled = true
+port = 54323
+
+[auth]
+enabled = true
+site_url = "http://127.0.0.1:3000"
+additional_redirect_urls = [
+  "http://localhost:3000/painel/nova-senha",
+  "http://127.0.0.1:3000/painel/nova-senha",
+  "https://teclanativa.netlify.app/painel/nova-senha",
+]
+
+# Os webhooks validam a assinatura de cada provedor no código antes de ler o JSON.
+[functions.pagbank-webhook]
+verify_jwt = false
+
+# A função valida X-ME-Signature com o segredo do aplicativo Melhor Envio.
+[functions.melhor-envio-webhook]
+verify_jwt = false
+
+# Edge functions public-facing validate their own strict CORS/origin and payload rules.
+[functions.melhor-envio-quote]
+verify_jwt = false
+
+[functions.pagbank-demo-checkout]
+verify_jwt = false
+
+[functions.team-management]
+verify_jwt = false
+
+[functions.integration-health]
+verify_jwt = false
+
+# O callback OAuth é validado por state de uso único; o início da autorização valida a sessão no código.
+[functions.melhor-envio-oauth]
+verify_jwt = false
